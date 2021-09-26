@@ -1,0 +1,28 @@
+
+on:
+  - push
+
+jobs:
+  hello_world_job:
+    runs-on: ubuntu-latest
+    name: Push to wiki
+    steps:
+
+    - name: Checkout base code
+      uses: actions/checkout@v2
+      with:
+        path: base-code
+    - name: Checkout wiki code
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ github.repository }}.wiki
+        path: markdown
+    - name: write some file
+      run: date > markdown/iwashere.txt
+    - name: Push to wiki
+      run: |
+        cd markdown
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git diff-index --quiet HEAD || git commit -m "Add changes" && git push
